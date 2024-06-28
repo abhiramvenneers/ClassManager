@@ -1,0 +1,33 @@
+{% extends 'classroom/base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    {% if marks_given %}
+    <h1>Marks added successfully.</h1>
+    {% else %}
+      <h2>Add Viva Marks for {{ student.name }} </h2>
+      
+      <form method="post" id="vivaForm" >
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      {% endif %}
+  </div>
+</div>
+<script>
+  // Add an event listener for form submission
+
+  document.getElementById("vivaForm").addEventListener("submit", function(event) {
+    // Show a confirmation dialog
+    var confirmation = confirm("You submitted viva marks on semester. Do you want to confirm this? If ok Submit the form.");
+    
+    // If the user cancels, prevent form submission
+    if (!confirmation) {
+      event.preventDefault();
+    }
+  });
+</script>
+{% endblock %}

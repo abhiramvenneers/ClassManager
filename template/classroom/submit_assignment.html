@@ -1,0 +1,28 @@
+{% extends 'classroom/base.html' %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="container">
+<div class="jumbotron">
+  <h1>Submit Assignment</h1>
+  <form id="assignmentForm" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" class="btn btn-primary" name="" value="Submit">
+  </form>
+</div>
+</div>
+<script>
+  // Add an event listener for form submission
+  document.getElementById("assignmentForm").addEventListener("submit", function(event) {
+    // Show a confirmation dialog
+    var confirmation = confirm("You can't modify the assignment. Are you sure you want to submit the assignment?");
+    
+    // If the user cancels, prevent form submission
+    if (!confirmation) {
+      event.preventDefault();
+    }
+  });
+</script>
+
+{% endblock %}
+

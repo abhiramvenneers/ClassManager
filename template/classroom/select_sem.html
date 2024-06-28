@@ -1,0 +1,29 @@
+
+
+<!-- add_internal_marks.html -->
+{% extends 'classroom/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>Select Semester</h1>
+    <form method="post">
+        <label for="semester">Select Semester:</label>
+    <select name="semester" id="semester">
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+        <option value="3">Semester 3</option>
+        <!-- Add more options for other semesters as needed -->
+    </select>
+        <button type="submit">Submit</button>
+    </form>
+    {% if semester_selected %}
+        <a href="{% url 'classroom:student_marks_list' pk=student.pk semester=semester %}">
+            <button>View Marks</button>
+        </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,118 @@
+{% extends 'classroom/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="jumbotron">
+        {% if given_marks.count == 0 %}
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">No Marks Found!</h4>
+            <p class="mb-0">You have not given any marks to {{ student.name }}.</p>
+        </div>
+        {% else %}
+        <h3 class="mb-4">Marks Profile of {{ student.name }}</h3>
+
+        <!-- <div class="row mb-4">
+            <div class="col-md-4">
+                <form method="GET" class="form-inline">
+                    <label class="my-1 mr-2" for="semester_filter">Filter by Semester:</label>
+                    <select class="custom-select my-1 mr-sm-2" id="semester_filter" name="semester">
+                        <option value="" {% if not request.GET.semester %}selected{% endif %}>All Semesters</option>
+                        {% for semester, _ in semester_marks.items %}
+                        <option value="{{ semester }}" {% if request.GET.semester == semester|stringformat:"s" %}selected{% endif %}>Semester {{ semester }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary my-1">Filter</button>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <form method="GET" class="form-inline">
+                    <label class="my-1 mr-2" for="teacher_filter">Filter by Teacher:</label>
+                    <select class="custom-select my-1 mr-sm-2" id="teacher_filter" name="teacher">
+                        <option value="" {% if not request.GET.teacher %}selected{% endif %}>All Teachers</option>
+                        {% for teacher, _ in teacher_marks.items %}
+                        <option value="{{ teacher.pk }}" {% if request.GET.teacher == teacher.pk|stringformat:"s" %}selected{% endif %}>{{ teacher.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary my-1">Filter</button>
+                </form>
+            </div>
+        </div> -->
+
+        {% regroup given_marks|dictsort:"semester" by semester as semester_marks %} <!-- Sort by semester -->
+        {% for semester in semester_marks %}
+        <div class="card mb-4">
+            <h5 class="card-header bg-dark text-white">Semester: {{ semester.grouper }}</h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class='table table-striped'>
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Sr. No.</th>
+                                <th scope='col'>Subject</th>
+                                <th scope='col'>Marks Obtained</th>
+                                <th scope="col">Max. Marks</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for marks in semester.list %}
+                            {% if marks.marks_obtained is not None %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ marks.subject_name }}</td>
+                                <td>{{ marks.marks_obtained }}</td>
+                                <td>{{ marks.maximum_marks }}</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" href="{% url 'classroom:update_marks' pk=marks.pk %}">Update</a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="mt-4">
+            <h3>Average Marks Per Semester</h3>
+            <div class="table-responsive">
+                <table class='table table-striped'>
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Semester</th>
+                            <th>Average Test Marks</th>
+                            <th>Viva Marks</th>
+                            <th>Assignment Marks</th>
+                            <th>CE Mark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for semester, marks_data in average_marks_per_semester.items %}
+                        <tr>
+                            <td>Semester {{ semester }}</td>
+                            <td>{{ marks_data.average_marks }} / 5</td>
+                            <td>{{ marks_data.viva_mark }} / 2.5</td>
+                            <td>{{ marks_data.assignment_mark }} / 2.5</td>
+                            <td>{{ marks_data.total_ce_marks }} / 10</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% endif %}
+
+        <div class="mt-4">
+            <a class="btn btn-danger mr-2" href="{% url 'classroom:enter_marks' pk=student.pk %}">Add Test Mark</a>
+            <a class="btn btn-danger mr-2" href="{% url 'classroom:add_viva_mark' pk=student.pk %}">Add Viva Mark</a>
+            <a class="btn btn-danger" href="{% url 'classroom:add_assignment_mark' pk=student.pk %}">Add Assignment Mark</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

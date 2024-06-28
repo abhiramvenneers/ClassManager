@@ -1,0 +1,81 @@
+{% extends 'classroom/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="jumbotron">
+        <form method="GET" action="{% url 'classroom:submit_list' %}">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="semesterSelect">Select Semester:</label>
+                    <select class="form-control" id="semesterSelect" name="semester_id">
+                        <option value="">All Semesters</option>
+                        <option value="1" {% if semester_id == '1' %}selected{% endif %}>Semester 1</option>
+                        <option value="2" {% if semester_id == '2' %}selected{% endif %}>Semester 2</option>
+                        <option value="3" {% if semester_id == '3' %}selected{% endif %}>Semester 3</option>
+                        <option value="4" {% if semester_id == '4' %}selected{% endif %}>Semester 4</option>
+                        <option value="5" {% if semester_id == '5' %}selected{% endif %}>Semester 5</option>
+                        <option value="6" {% if semester_id == '6' %}selected{% endif %}>Semester 6</option>
+                        <option value="7" {% if semester_id == '7' %}selected{% endif %}>Semester 7</option>
+                        <option value="8" {% if semester_id == '8' %}selected{% endif %}>Semester 8</option>
+                        <option value="9" {% if semester_id == '9' %}selected{% endif %}>Semester 9</option>
+                        <option value="10" {% if semester_id == '10' %}selected{% endif %}>Semester 10</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <button type="submit" class="btn btn-primary mt-4">Filter</button>
+                </div>
+            </div>
+        </form>
+
+        {% if submitted_assignments %}
+            <h2>Submitted Assignments</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Submitted By</th>
+                            <th scope="col">Assignment</th>
+                            <th scope="col">Submitted on</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in submitted_assignments %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ submission.student.name }}</td>
+                                <td>{{ submission.submitted_assignment.assignment_name }}</td>
+                                <td>{{ submission.created_at }}</td>
+                                <td>
+                                    <a href="{{ submission.submit.url }}" class="btn btn-primary" target="_blank">Download</a>
+                                    <a class="btn btn-danger" href="{% url 'classroom:add_assignment_mark' pk=submission.student.pk %}">Enter Marks</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">No assignments submitted yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <h2>No submissions yet.</h2>
+        {% endif %}
+
+        <h2>Non-Submitted Students</h2>
+        {% if non_submitted_students %}
+            <ul>
+                {% for student in non_submitted_students %}
+                    <li>{{ student.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>All students have submitted their assignments.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

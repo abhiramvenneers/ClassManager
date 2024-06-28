@@ -1,0 +1,6 @@
+{% extends 'classroom/base.html' %}
+{% block content %}
+{% for student, marks in student_marks.items %}
+    <p>{{ student.name }} - Average Marks: {{ marks }}</p>
+{% endfor %}
+{% endblock %}
